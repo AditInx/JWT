@@ -15,9 +15,12 @@ const Login = () => {
         [name]: value,
       });
     };
+
+    const [errorMessage, setErrorMessage] = useState("");
   
     const handleSubmit = async (e) => {
       e.preventDefault();
+      setErrorMessage("");
       try {
         const response = await fetch("http://localhost:3000/auth/login", {
           method: "POST",
@@ -27,11 +30,14 @@ const Login = () => {
           body: JSON.stringify(formData),
         });
         const result = await response.json();
+        if(!response.ok){
+          throw new Error(result.message || "Invalid credentials");
+        }
         localStorage.setItem("token",result.token);
         console.log(result);
         navigate("/dashboard");
       } catch (error) {
-        console.error(error.message);
+        setErrorMessage(error.message);
       } finally {
         setFormData({
           email: "",
@@ -61,11 +67,12 @@ const Login = () => {
             placeholder="Enter password"
             value={formData.password}
             onChange={handleInputChange}
-          />
+            />
+            </Form.Group>
+            {errorMessage && <p className="error-message">{errorMessage}</p>}
           <Button variant="primary" type="submit" className="w-100">
             Login
           </Button>
-        </Form.Group>
       </Form>
     </div>
   );

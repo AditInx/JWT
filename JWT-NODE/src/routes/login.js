@@ -1,9 +1,11 @@
 import express from 'express';
 import cors from 'cors';
 import login from '../controllers/login.js';
+import {refreshToken} from '../controllers/login.js';
 
 const router = express.Router();
-router.post('/login',login);
 router.use(cors());
+router.post('/login',login);
+router.post('/refresh-token',refreshToken);
 
 export default router;
